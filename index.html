@@ -14,11 +14,19 @@
             -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
         }
 
+        html {
+            background-color: #050005; 
+            overscroll-behavior: none; 
+        }
+
         body {
             background: radial-gradient(circle at 50% 20%, #3a0020 0%, #1a0010 45%, #050005 100%);
             display: flex; justify-content: center; align-items: center;
-            height: 100vh; width: 100vw; overflow: hidden; font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            height: 100dvh;
+            width: 100vw; overflow: hidden; font-family: 'Poppins', sans-serif;
             position: relative; touch-action: none;
+            overscroll-behavior: none;
         }
 
         /* --- Background Ambient Elements --- */
@@ -39,9 +47,12 @@
 
         .drift-heart {
             position: absolute; bottom: -40px; z-index: 3; pointer-events: none; opacity: 0;
-            animation: driftUp linear forwards; filter: drop-shadow(0 0 6px rgba(255,150,190,0.6));
+            animation: driftUp linear forwards; 
+            text-shadow: 0 0 6px rgba(255,150,190,0.6); 
+            will-change: transform, opacity;
+            transform: translateZ(0); /* Hardware Acceleration */
         }
-        @keyframes driftUp { 0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; } 8% { opacity: 0.9; } 90% { opacity: 0.7; } 100% { transform: translateY(-110vh) translateX(var(--drift-x)) rotate(var(--drift-rot)); opacity: 0; } }
+        @keyframes driftUp { 0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0; } 8% { opacity: 0.9; } 90% { opacity: 0.7; } 100% { transform: translate3d(var(--drift-x), -110vh, 0) rotate(var(--drift-rot)); opacity: 0; } }
 
         /* --- Fading Words Background --- */
         .fade-word {
@@ -53,6 +64,7 @@
             z-index: 4;
             text-shadow: 0 0 15px rgba(255, 20, 147, 0.6);
             animation: wordFadeAnim 3s ease-in-out forwards;
+            will-change: transform, opacity;
         }
         @keyframes wordFadeAnim {
             0% { opacity: 0; transform: scale(0.8) translateY(10px); }
@@ -80,15 +92,18 @@
         @keyframes floatText { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
 
         .explosion-heart {
-            position: absolute; pointer-events: none; z-index: 120; transform: translate(-50%, -50%) scale(0.5);
-            animation: popOut 1.2s cubic-bezier(0.15, 0.9, 0.3, 1) forwards; filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.8));
+            position: absolute; pointer-events: none; z-index: 120; 
+            transform: translate(-50%, -50%) scale(0.5);
+            animation: popOut 1.2s cubic-bezier(0.15, 0.9, 0.3, 1) forwards; 
+            text-shadow: 0 0 10px rgba(255, 20, 147, 0.8); 
+            will-change: transform, opacity;
         }
-        @keyframes popOut { 0% { transform: translate(-50%, -50%) scale(0.5) rotate(0deg); opacity: 1; } 100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(var(--s)) rotate(var(--rot)); opacity: 0; } }
+        @keyframes popOut { 0% { transform: translate3d(-50%, -50%, 0) scale(0.5) rotate(0deg); opacity: 1; } 100% { transform: translate3d(calc(-50% + var(--tx)), calc(-50% + var(--ty)), 0) scale(var(--s)) rotate(var(--rot)); opacity: 0; } }
 
-        /* --- Dark Glassmorphism Letter --- */
+        /* --- Dark Glassmorphism Letter (SUPER CUTE VERSION) --- */
         #loveLetter {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(5, 0, 5, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            background: rgba(5, 0, 5, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             z-index: 70; display: flex; align-items: center; justify-content: center;
             opacity: 0; pointer-events: none; transition: opacity 0.6s ease;
         }
@@ -96,44 +111,74 @@
         
         .letter-card {
             width: 85%; max-width: 380px; 
-            background: linear-gradient(145deg, rgba(255, 20, 147, 0.15) 0%, rgba(20, 0, 10, 0.85) 100%);
+            background: linear-gradient(145deg, rgba(255, 182, 193, 0.25) 0%, rgba(30, 0, 15, 0.9) 100%);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 105, 180, 0.4); 
-            border-radius: 25px; padding: 40px 25px 30px 25px; text-align: center;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(255, 182, 193, 0.1);
+            border: 2px solid rgba(255, 105, 180, 0.6); 
+            border-radius: 35px; padding: 45px 25px 35px 25px; text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 20, 147, 0.4), inset 0 0 25px rgba(255, 182, 193, 0.2);
             transform: scale(0.8) translateY(40px) rotate(-3deg);
             transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative; margin-top: 20px;
         }
         #loveLetter.show .letter-card { transform: scale(1) translateY(0) rotate(0deg); }
         
-        .letter-card::before {
-            content: '🎀'; position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
-            font-size: 55px; filter: drop-shadow(0 0 15px rgba(255,20,147,0.6));
-            animation: bounceBow 2s infinite ease-in-out; z-index: 10;
-        }
-        @keyframes bounceBow { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-8px); } }
-
-        .letter-card h2 { 
-            font-family: 'Great Vibes', cursive; font-size: 42px; 
-            background: linear-gradient(45deg, #ffb6c1, #ff1493, #ff69b4);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 12px; line-height: 1.1;
-            filter: drop-shadow(0 2px 8px rgba(255, 20, 147, 0.4));
+        /* Inner dashed border for handmade card look */
+        .letter-card::after {
+            content: ''; position: absolute;
+            top: 12px; left: 12px; right: 12px; bottom: 12px;
+            border: 1.5px dashed rgba(255, 182, 193, 0.5);
+            border-radius: 25px; pointer-events: none;
         }
         
+        .letter-card::before {
+            content: '🎀'; position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
+            font-size: 60px; text-shadow: 0 0 20px rgba(255,20,147,0.8), 0 0 40px rgba(255,105,180,0.6); 
+            animation: bounceBow 2s infinite ease-in-out; z-index: 10;
+        }
+        @keyframes bounceBow { 0%, 100% { transform: translateX(-50%) translateY(0) scale(1); } 50% { transform: translateX(-50%) translateY(-10px) scale(1.1); } }
+
+        .letter-card h2 { 
+            font-family: 'Great Vibes', cursive; font-size: 46px; 
+            background: linear-gradient(to right, #ffb6c1, #ff69b4, #ff1493, #ffb6c1);
+            background-size: 200% auto;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 12px; line-height: 1.1;
+            animation: shineGradient 3s linear infinite;
+            filter: drop-shadow(0 2px 8px rgba(255, 20, 147, 0.5));
+        }
+        @keyframes shineGradient { to { background-position: 200% center; } }
+        
         .letter-card p { 
-            color: rgba(255, 255, 255, 0.95); font-size: 14px; line-height: 1.7; margin-bottom: 10px; 
+            color: rgba(255, 255, 255, 0.95); font-size: 14.5px; line-height: 1.7; margin-bottom: 12px; 
             font-family: 'Noto Sans Sinhala', 'Poppins', sans-serif; font-weight: 400; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+            position: relative; z-index: 5;
         }
         
         .letter-close {
-            margin-top: 15px; background: linear-gradient(135deg, #ff1493, #d81b60);
-            border: 1px solid rgba(255, 255, 255, 0.3); color: #ffffff; border-radius: 30px; padding: 12px 28px;
-            font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 25px rgba(255, 20, 147, 0.5);
+            margin-top: 20px; background: linear-gradient(135deg, #ff69b4, #ff1493);
+            border: 2px solid rgba(255, 255, 255, 0.4); color: #ffffff; border-radius: 40px; padding: 12px 30px;
+            font-size: 16px; font-weight: 700; cursor: pointer; 
+            box-shadow: 0 10px 25px rgba(255, 20, 147, 0.6), inset 0 2px 8px rgba(255,255,255,0.4);
             transition: all 0.3s ease; font-family: 'Noto Sans Sinhala', 'Poppins', sans-serif; text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            animation: heartbeatPulse 2s infinite; position: relative; z-index: 5;
         }
-        .letter-close:active { transform: scale(0.92); box-shadow: 0 4px 15px rgba(255, 20, 147, 0.3); }
+        .letter-close:active { transform: scale(0.92) !important; animation: none; }
+        
+        @keyframes heartbeatPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 35px rgba(255, 20, 147, 0.8), inset 0 2px 8px rgba(255,255,255,0.6); }
+        }
+
+        /* Cute floating items around the card */
+        .card-float-item {
+            position: absolute; font-size: 22px; z-index: 15;
+            animation: cardFloatGently 3s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 10px rgba(255, 105, 180, 0.8)); pointer-events: none;
+        }
+        @keyframes cardFloatGently {
+            0% { transform: translateY(0) rotate(-15deg) scale(1); }
+            100% { transform: translateY(-15px) rotate(15deg) scale(1.1); }
+        }
 
         /* --- Final Cute Animation Ending Styles --- */
         #cuteTransition {
@@ -143,10 +188,10 @@
         }
 
         @keyframes cutePopExpand {
-            0% { transform: translate(-50%, -50%) scale(0) rotate(-15deg); opacity: 0; text-shadow: 0 0 20px rgba(255, 20, 147, 0.8); }
-            30% { transform: translate(-50%, -50%) scale(4) rotate(15deg); opacity: 1; text-shadow: 0 0 40px rgba(255, 20, 147, 0.9); }
-            55% { transform: translate(-50%, -50%) scale(15) rotate(0deg); opacity: 1; text-shadow: none; }
-            100% { transform: translate(-50%, -50%) scale(60); opacity: 0; text-shadow: none; }
+            0% { transform: translate3d(-50%, -50%, 0) scale(0) rotate(-15deg); opacity: 0; text-shadow: 0 0 20px rgba(255, 20, 147, 0.8); }
+            30% { transform: translate3d(-50%, -50%, 0) scale(4) rotate(15deg); opacity: 1; text-shadow: 0 0 40px rgba(255, 20, 147, 0.9); }
+            55% { transform: translate3d(-50%, -50%, 0) scale(15) rotate(0deg); opacity: 1; text-shadow: none; }
+            100% { transform: translate3d(-50%, -50%, 0) scale(60); opacity: 0; text-shadow: none; }
         }
 
         #finalMessage {
@@ -156,37 +201,76 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* --- Polaroid Styles --- */
+        /* --- Polaroid Styles (Super Cute Version) --- */
         .polaroid-frame {
+            position: relative;
             background: white;
             padding: 12px 12px 25px 12px;
-            border-radius: 4px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 25px rgba(255, 105, 180, 0.3);
+            border-radius: 8px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 35px rgba(255, 105, 180, 0.4);
             transform: rotate(-5deg) scale(0.8);
-            margin-bottom: 25px;
-            width: 220px;
+            margin-bottom: 30px;
+            width: 230px;
             opacity: 0;
-            animation: dropIn 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.8s;
+            animation: dropIn 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.8s,
+                       polaroidFloat 4s ease-in-out infinite alternate 2.3s;
         }
+        
         .polaroid-frame img {
             width: 100%;
             height: auto;
             aspect-ratio: 1/1;
             object-fit: cover;
-            border-radius: 2px;
-            border: 1px solid #eaeaea;
+            border-radius: 4px;
+            border: 1px solid #ffe4e1;
         }
+        
         .polaroid-text {
             font-family: 'Great Vibes', cursive;
             color: #ff1493;
-            font-size: 24px;
+            font-size: 26px;
             margin-top: 15px;
-            text-shadow: none;
+            text-shadow: 0 1px 2px rgba(255,20,147,0.2);
             letter-spacing: 1px;
         }
+
+        .cute-pin {
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 42px;
+            z-index: 10;
+            filter: drop-shadow(0 5px 8px rgba(0,0,0,0.4));
+            animation: pinBounce 2s infinite;
+        }
+        
+        @keyframes pinBounce {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); filter: drop-shadow(0 8px 12px rgba(0,0,0,0.5)); }
+        }
+
+        .photo-sparkle {
+            position: absolute;
+            font-size: 24px;
+            animation: photoSparkleAnim 2.5s infinite alternate ease-in-out;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes photoSparkleAnim {
+            0% { transform: scale(0.8) rotate(-15deg); opacity: 0.6; }
+            100% { transform: scale(1.2) rotate(15deg); opacity: 1; filter: drop-shadow(0 0 10px rgba(255,105,180,0.8)); }
+        }
+
         @keyframes dropIn {
-            0% { transform: translateY(-80px) rotate(-15deg) scale(0.5); opacity: 0; }
-            100% { transform: translateY(0) rotate(-4deg) scale(1.1); opacity: 1; }
+            0% { transform: translate3d(0, -80px, 0) rotate(-15deg) scale(0.5); opacity: 0; }
+            100% { transform: translate3d(0, 0, 0) rotate(-4deg) scale(1.1); opacity: 1; }
+        }
+
+        @keyframes polaroidFloat {
+            0% { transform: translate3d(0, 0, 0) rotate(-4deg) scale(1.1); }
+            100% { transform: translate3d(0, -10px, 0) rotate(-2deg) scale(1.1); }
         }
 
         .glowing-name {
@@ -207,24 +291,25 @@
         /* --- Final Screen Edge Burst Animation --- */
         .finale-emoji {
             position: fixed; pointer-events: none; z-index: 105; opacity: 0;
-            animation: finaleFloat forwards; filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.8));
+            animation: finaleFloat forwards; 
+            text-shadow: 0 0 10px rgba(255, 20, 147, 0.8); 
             will-change: transform, opacity;
+            transform: translateZ(0); /* Hardware Acceleration */
         }
         @keyframes finaleFloat {
-            0% { transform: translate(0, 0) scale(0.5) rotate(0deg); opacity: 0; }
+            0% { transform: translate3d(0, 0, 0) scale(0.5) rotate(0deg); opacity: 0; }
             10% { opacity: 1; }
             80% { opacity: 0.9; }
-            100% { transform: translate(var(--tx), var(--ty)) scale(var(--s)) rotate(var(--rot)); opacity: 0; }
+            100% { transform: translate3d(var(--tx), var(--ty), 0) scale(var(--s)) rotate(var(--rot)); opacity: 0; }
         }
 
         /* --- MOBILE RESPONSIVE FIXES --- */
         @media (max-width: 768px) {
-            /* මෙතනින් තමයි canvas එක Phone එකට හරියටම මැදට ගැලපෙන්න ලොකු කරන්නේ */
             #canvas, #fxCanvas { 
-                width: 160vw; /* Canvas එක Screen එක වගේ 1.8 ගුණයක් ලොකු කරනවා */
+                width: 160vw;
                 max-width: none;
                 left: 50%;
-                top: 48%; /* පොඩ්ඩක් උඩට ගන්නවා ගහ පේන්න */
+                top: 48%; 
                 transform: translate(-50%, -50%); 
             }
             
@@ -233,15 +318,18 @@
             .letter-card { width: 92%; padding: 35px 20px 25px 20px; }
             .letter-card h2 { font-size: 34px; margin-bottom: 8px; }
             .letter-card p { font-size: 13.5px; line-height: 1.6; margin-bottom: 8px; }
-            .letter-close { padding: 10px 24px; font-size: 14px; }
+            .letter-close { padding: 10px 24px; font-size: 14px; margin-top: 15px; }
             .letter-card::before { font-size: 45px; top: -25px; }
             .glowing-name { font-size: 55px; line-height: 1.1; }
             .final-sub { font-size: 16px; letter-spacing: 2px; }
-            .polaroid-frame { width: 180px; margin-bottom: 15px; }
+            
+            /* Polaroid Mobile Adjustments */
+            .polaroid-frame { width: 190px; margin-bottom: 15px; }
             .polaroid-text { font-size: 20px; }
+            .cute-pin { font-size: 35px; top: -18px; }
+            
             .fade-word { font-size: 24px; }
         }
-		
     </style>
 </head>
 <body>
@@ -258,6 +346,12 @@
     
     <div id="finalMessage">
         <div class="polaroid-frame">
+            <!-- Cute Pin & Floating items -->
+            
+            <div class="photo-sparkle" style="top: -15px; right: -25px; animation-delay: 0s;">✨</div>
+            <div class="photo-sparkle" style="bottom: 40px; left: -25px; animation-delay: 0.5s;">💖</div>
+            <div class="photo-sparkle" style="top: 50%; right: -30px; animation-delay: 1s;">🐰</div>
+            
             <img src="your-photo.jpg" alt="My Love">
             <div class="polaroid-text">Happy Birthday My Love 🎂</div>
         </div>
@@ -268,7 +362,13 @@
 
     <div id="loveLetter">
         <div class="letter-card">
-            <h2>Happy Birthday<br>My Wife 💕</h2>
+            
+            <!-- Cute Floating Elements Around the Card -->
+            <div class="card-float-item" style="top: -15px; left: -15px; animation-delay: 0s;">✨</div>
+            <div class="card-float-item" style="top: 40%; right: -20px; animation-delay: 0.5s;">💖</div>
+            <div class="card-float-item" style="bottom: 10px; left: -15px; animation-delay: 1s;">🐰</div>
+
+            <h2>Happy Birthday<br>My love 💕</h2>
             <p>මගේ රත්තරන් පැටියෝ, 🥺💖</p>
             <p>ඔයාට ගොඩාක් සතුටු පිරුණු සුබම සුබ උපන්දිනයක් වේවා මගේ මැණික! 🎂🎉❤️ ඔයා තමයි මගේ ජීවිතේ මට ලැබුණු ලොකුම සතුට🥺❤️.</p>
             <p>අද දවසට මම ගොඩක් ආදරෙයි, මොකද මගේ සැනසීම මේ ලෝකෙට ආවේ අද වගේ දවසක නිසා. 🥺✨ මගේ මුළු ලෝකෙම ලස්සන කළාට ඔයාට ගොඩක් ස්තූතියි❤️.</p>
@@ -282,6 +382,11 @@
 
     <script>
         let gameState = 'drawing'; 
+        
+        // Safari scroll and address bar fix
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
 
         const canvas = document.getElementById('canvas');
         const fxCanvas = document.getElementById('fxCanvas');
@@ -453,6 +558,8 @@
             let burstY = rect.top + (rect.height * (300 - 13*16) / logicalHeight);
 
             const emojis = ['❤️', '💖', '💕', '✨', '🌸', '🦋'];
+            
+            // Original amount of explosion hearts (80) restored
             for (let i = 0; i < 80; i++) {
                 let p = document.createElement('div');
                 p.className = 'explosion-heart';
@@ -637,9 +744,11 @@
                     let interval = setInterval(function() {
                         let timeLeft = animationEnd - Date.now();
                         if (timeLeft <= 0) { return clearInterval(interval); }
+                        
+                        // Original Confetti amount restored (50)
                         let particleCount = 50 * (timeLeft / duration);
                         confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 } }));
-                    }, 250);
+                    }, 250); // Original speed restored (250ms)
                     
                     function spawnFinaleEmoji() {
                         const emojis = ['❤️', '💖', '💕', '✨', '🌸', '🐰', '🎈', '🎂'];
@@ -678,9 +787,10 @@
                         p.style.animationTimingFunction = 'cubic-bezier(0.25, 1, 0.5, 1)';
 
                         document.body.appendChild(p);
-                        setTimeout(() => p.remove(), 5000); 
+                        setTimeout(() => p.remove(), 4000); 
                     }
 
+                    // Original finale emoji burst restored (3 at a time, every 300ms)
                     setInterval(() => {
                         spawnFinaleEmoji();
                         spawnFinaleEmoji();
