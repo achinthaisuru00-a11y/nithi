@@ -100,7 +100,7 @@
         }
         @keyframes popOut { 0% { transform: translate3d(-50%, -50%, 0) scale(0.5) rotate(0deg); opacity: 1; } 100% { transform: translate3d(calc(-50% + var(--tx)), calc(-50% + var(--ty)), 0) scale(var(--s)) rotate(var(--rot)); opacity: 0; } }
 
-        /* --- Dark Glassmorphism Letter (SUPER CUTE VERSION) --- */
+        /* --- Dark Glassmorphism Letter --- */
         #loveLetter {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(5, 0, 5, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -122,7 +122,7 @@
         }
         #loveLetter.show .letter-card { transform: scale(1) translateY(0) rotate(0deg); }
         
-        /* Inner dashed border for handmade card look */
+        /* Inner dashed border */
         .letter-card::after {
             content: ''; position: absolute;
             top: 12px; left: 12px; right: 12px; bottom: 12px;
@@ -169,7 +169,6 @@
             50% { transform: scale(1.05); box-shadow: 0 15px 35px rgba(255, 20, 147, 0.8), inset 0 2px 8px rgba(255,255,255,0.6); }
         }
 
-        /* Cute floating items around the card */
         .card-float-item {
             position: absolute; font-size: 22px; z-index: 15;
             animation: cardFloatGently 3s ease-in-out infinite alternate;
@@ -201,13 +200,13 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* --- Polaroid Styles (Super Cute Version) --- */
+        /* --- Polaroid Styles (UPDATED FOR BETTER PHOTO & THEME) --- */
         .polaroid-frame {
             position: relative;
-            background: white;
+            background: linear-gradient(135deg, #ffffff 0%, #fff0f5 100%); /* Soft pinkish-white instead of pure white */
             padding: 12px 12px 25px 12px;
             border-radius: 8px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 35px rgba(255, 105, 180, 0.4);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 40px rgba(255, 105, 180, 0.5), inset 0 0 15px rgba(255, 182, 193, 0.3);
             transform: rotate(-5deg) scale(0.8);
             margin-bottom: 30px;
             width: 230px;
@@ -219,10 +218,11 @@
         .polaroid-frame img {
             width: 100%;
             height: auto;
-            aspect-ratio: 1/1;
+            aspect-ratio: 4/5; /* Better for portrait photos, won't cut heads */
             object-fit: cover;
+            object-position: center top; /* Focuses on the top/face area */
             border-radius: 4px;
-            border: 1px solid #ffe4e1;
+            border: 1px solid #ffb6c1;
         }
         
         .polaroid-text {
@@ -356,7 +356,7 @@
             <div class="polaroid-text">Happy Birthday My Love 🎂</div>
         </div>
         
-        <h1 class="glowing-name">Anjalina 🐰</h1>
+        <h1 class="glowing-name">Anjalina 💕</h1>
         <p class="final-sub">My Forever Love ✨</p>
     </div>
 
@@ -372,7 +372,7 @@
             <p>මගේ රත්තරන් පැටියෝ, 🥺💖</p>
             <p>ඔයාට ගොඩාක් සතුටු පිරුණු සුබම සුබ උපන්දිනයක් වේවා මගේ මැණික! 🎂🎉❤️ ඔයා තමයි මගේ ජීවිතේ මට ලැබුණු ලොකුම සතුට🥺❤️.</p>
             <p>අද දවසට මම ගොඩක් ආදරෙයි, මොකද මගේ සැනසීම මේ ලෝකෙට ආවේ අද වගේ දවසක නිසා. 🥺✨ මගේ මුළු ලෝකෙම ලස්සන කළාට ඔයාට ගොඩක් ස්තූතියි❤️.</p>
-            <p>හැමදාමත් මේ වගේම සතුටින්, ඉන්න ලැබෙන්න කියලා මම හදවතින්ම ප්‍රාර්ථනා කරනවා✨. මම ඔයාට ගොඩාක් ආදරෙයි! 🥺 ❤️</p>
+            <p>හැමදාමත් මේ වගේම සතුටින්, ඉන්න ලැබෙන්න කියලා මම හදවතින්ම ප්‍රාර්ථනා කරනවා✨. මම චූටි දූට ගොඩාක් ආදරෙයි! 🥺 ❤️</p>
             <button class="letter-close" id="closeLetter">ආදරෙයි ගොඩාක්! 🤗💖</button>
         </div>
     </div>
@@ -559,7 +559,8 @@
 
             const emojis = ['❤️', '💖', '💕', '✨', '🌸', '🦋'];
             
-            // Original amount of explosion hearts (80) restored
+            // OPTIMIZED: Using DocumentFragment to prevent lag
+            const frag = document.createDocumentFragment();
             for (let i = 0; i < 80; i++) {
                 let p = document.createElement('div');
                 p.className = 'explosion-heart';
@@ -572,9 +573,10 @@
                 p.style.setProperty('--s', (0.5 + Math.random() * 1.5) + '');
                 p.style.fontSize = (15 + Math.random() * 20) + 'px';
                 p.style.left = `${burstX}px`; p.style.top = `${burstY}px`;
-                document.body.appendChild(p);
+                frag.appendChild(p);
                 setTimeout(() => p.remove(), 1200);
             }
+            document.body.appendChild(frag);
 
             setTimeout(() => {
                 ctx.clearRect(0, 0, logicalWidth, logicalHeight);
@@ -601,7 +603,6 @@
                 // ------------------------------------------
 
                 gameState = 'tree';
-                myTree.init();
                 animateTree();
             }, 300);
         }
@@ -624,6 +625,9 @@
         const treeData = { branch: [[535, 680, 570, 250, 500, 200, 30, 100, [[540, 500, 455, 417, 340, 400, 13, 100, [[450, 435, 434, 430, 394, 395, 2, 40]]], [550, 445, 600, 356, 680, 345, 12, 100, [[578, 400, 648, 409, 661, 426, 3, 80]]], [539, 281, 537, 248, 534, 217, 3, 40], [546, 397, 413, 247, 328, 244, 9, 80, [[427, 286, 383, 253, 371, 205, 2, 40], [498, 345, 435, 315, 395, 330, 4, 60]]], [546, 357, 608, 252, 678, 221, 6, 100, [[590, 293, 646, 277, 648, 271, 2, 80]]]]]], bloom: { num: 700 } };
         const myTree = new Tree(canvas, logicalWidth, logicalHeight, treeData);
         
+        // Background එකේදිම මල් ටික calculate කරනවා. එතකොට Animation එක හිර වෙන්නේ නෑ!
+        myTree.init(); 
+
         function animateTree() { 
             if (gameState !== 'tree') return; 
             if (myTree.canGrow()) { 
