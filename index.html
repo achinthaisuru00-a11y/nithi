@@ -368,12 +368,9 @@
         
         let audioInitialized = false;
 
-        // Force browsers to unlock all audio files on the very first touch
+        // Force browsers to unlock all audio files
         function unlockAudio() {
             if (!audioInitialized) {
-                // Play background music
-                bgMusic.play().catch(e => console.log("Waiting for more direct interaction to play BG"));
-                
                 // Briefly play and pause other sounds to load them into browser memory
                 drawSound.play().then(() => drawSound.pause()).catch(e => {});
                 letterPopupSound.play().then(() => letterPopupSound.pause()).catch(e => {});
@@ -381,6 +378,11 @@
                 birthdaySong.play().then(() => birthdaySong.pause()).catch(e => {});
                 
                 audioInitialized = true;
+            }
+            
+            // Background music එක නැවතිලා නම් තියෙන්නේ, ඒක අනිවාර්යයෙන්ම play කරන්න 
+            if (bgMusic.paused) {
+                bgMusic.play().catch(e => console.log("BG Music waiting for interaction"));
             }
         }
         
@@ -622,8 +624,12 @@
                 drawSound.pause(); 
             } 
         }
-        canvas.addEventListener('mousedown', onPressDown); canvas.addEventListener('touchstart', onPressDown, {passive: false});
-        window.addEventListener('mouseup', onPressUp); window.addEventListener('touchend', onPressUp);
+        
+        // Listeners for drawing and triggering audio unlock
+        canvas.addEventListener('mousedown', onPressDown); 
+        canvas.addEventListener('touchstart', onPressDown, {passive: false});
+        window.addEventListener('mouseup', onPressUp); 
+        window.addEventListener('touchend', onPressUp);
 
         // --- Tree Drawing Logic ---
         function random(min, max) { return min + Math.floor(Math.random() * (max - min + 1)); }
