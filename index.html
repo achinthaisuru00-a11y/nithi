@@ -50,7 +50,7 @@
             animation: driftUp linear forwards; 
             text-shadow: 0 0 6px rgba(255,150,190,0.6); 
             will-change: transform, opacity;
-            transform: translateZ(0); /* Hardware Acceleration */
+            transform: translateZ(0);
         }
         @keyframes driftUp { 0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0; } 8% { opacity: 0.9; } 90% { opacity: 0.7; } 100% { transform: translate3d(var(--drift-x), -110vh, 0) rotate(var(--drift-rot)); opacity: 0; } }
 
@@ -122,7 +122,6 @@
         }
         #loveLetter.show .letter-card { transform: scale(1) translateY(0) rotate(0deg); }
         
-        /* Inner dashed border */
         .letter-card::after {
             content: ''; position: absolute;
             top: 12px; left: 12px; right: 12px; bottom: 12px;
@@ -200,10 +199,9 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* --- Polaroid Styles (UPDATED FOR BETTER PHOTO & THEME) --- */
         .polaroid-frame {
             position: relative;
-            background: linear-gradient(135deg, #ffffff 0%, #fff0f5 100%); /* Soft pinkish-white instead of pure white */
+            background: linear-gradient(135deg, #ffffff 0%, #ffcff1 100%);
             padding: 12px 12px 25px 12px;
             border-radius: 8px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 40px rgba(255, 105, 180, 0.5), inset 0 0 15px rgba(255, 182, 193, 0.3);
@@ -216,32 +214,19 @@
         }
         
         .polaroid-frame img {
-            width: 100%;
-            height: auto;
-            aspect-ratio: 4/5; /* Better for portrait photos, won't cut heads */
-            object-fit: cover;
-            object-position: center top; /* Focuses on the top/face area */
-            border-radius: 4px;
-            border: 1px solid #ffb6c1;
+            width: 100%; height: auto; aspect-ratio: 4/5;
+            object-fit: cover; object-position: center top;
+            border-radius: 4px; border: 1px solid #ffb6c1;
         }
         
         .polaroid-text {
-            font-family: 'Great Vibes', cursive;
-            color: #ff1493;
-            font-size: 26px;
-            margin-top: 15px;
-            text-shadow: 0 1px 2px rgba(255,20,147,0.2);
-            letter-spacing: 1px;
+            font-family: 'Great Vibes', cursive; color: #ff1493; font-size: 26px;
+            margin-top: 15px; text-shadow: 0 1px 2px rgba(255,20,147,0.2); letter-spacing: 1px;
         }
 
         .cute-pin {
-            position: absolute;
-            top: -22px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 42px;
-            z-index: 10;
-            filter: drop-shadow(0 5px 8px rgba(0,0,0,0.4));
+            position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+            font-size: 42px; z-index: 10; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.4));
             animation: pinBounce 2s infinite;
         }
         
@@ -251,11 +236,8 @@
         }
 
         .photo-sparkle {
-            position: absolute;
-            font-size: 24px;
+            position: absolute; font-size: 24px; pointer-events: none; z-index: -1;
             animation: photoSparkleAnim 2.5s infinite alternate ease-in-out;
-            pointer-events: none;
-            z-index: -1;
         }
 
         @keyframes photoSparkleAnim {
@@ -288,13 +270,11 @@
 
         @keyframes floatName { 0% { transform: translateY(0px) scale(1); } 100% { transform: translateY(-10px) scale(1.05); } }
 
-        /* --- Final Screen Edge Burst Animation --- */
         .finale-emoji {
             position: fixed; pointer-events: none; z-index: 105; opacity: 0;
             animation: finaleFloat forwards; 
             text-shadow: 0 0 10px rgba(255, 20, 147, 0.8); 
-            will-change: transform, opacity;
-            transform: translateZ(0); /* Hardware Acceleration */
+            will-change: transform, opacity; transform: translateZ(0); 
         }
         @keyframes finaleFloat {
             0% { transform: translate3d(0, 0, 0) scale(0.5) rotate(0deg); opacity: 0; }
@@ -306,13 +286,9 @@
         /* --- MOBILE RESPONSIVE FIXES --- */
         @media (max-width: 768px) {
             #canvas, #fxCanvas { 
-                width: 160vw;
-                max-width: none;
-                left: 50%;
-                top: 48%; 
+                width: 160vw; max-width: none; left: 50%; top: 48%; 
                 transform: translate(-50%, -50%); 
             }
-            
             .hold-text { font-size: 16px; padding: 0 20px; }
             .moon { width: 50px; height: 50px; top: 5%; right: 5%; }
             .letter-card { width: 92%; padding: 35px 20px 25px 20px; }
@@ -322,17 +298,21 @@
             .letter-card::before { font-size: 45px; top: -25px; }
             .glowing-name { font-size: 55px; line-height: 1.1; }
             .final-sub { font-size: 16px; letter-spacing: 2px; }
-            
-            /* Polaroid Mobile Adjustments */
             .polaroid-frame { width: 190px; margin-bottom: 15px; }
             .polaroid-text { font-size: 20px; }
             .cute-pin { font-size: 35px; top: -18px; }
-            
             .fade-word { font-size: 24px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- Audio Elements for Mobile Support (HIDDEN) -->
+    <audio id="bgMusicElement" src="romantic-bg.mp3" loop preload="auto"></audio>
+    <audio id="drawSoundElement" src="draw-sound.mp3" loop preload="auto"></audio>
+    <audio id="letterPopupSoundElement" src="letter-popup.mp3" preload="auto"></audio>
+    <audio id="finalRevealSoundElement" src="final-reveal.mp3" preload="auto"></audio>
+    <audio id="birthdaySongElement" src="birthday-song.mp3" preload="auto"></audio>
 
     <div class="stars" id="bgStars"></div>
     <div class="moon" id="moon"></div>
@@ -346,11 +326,9 @@
     
     <div id="finalMessage">
         <div class="polaroid-frame">
-            <!-- Cute Pin & Floating items -->
-            
             <div class="photo-sparkle" style="top: -15px; right: -25px; animation-delay: 0s;">✨</div>
             <div class="photo-sparkle" style="bottom: 40px; left: -25px; animation-delay: 0.5s;">💖</div>
-            <div class="photo-sparkle" style="top: 50%; right: -30px; animation-delay: 1s;">🐰</div>
+            <div class="photo-sparkle" style="top: 50%; right: -30px; animation-delay: 1s;">🎂</div>
             
             <img src="your-photo.jpg" alt="My Love">
             <div class="polaroid-text">Happy Birthday My Love 🎂</div>
@@ -362,17 +340,15 @@
 
     <div id="loveLetter">
         <div class="letter-card">
-            
-            <!-- Cute Floating Elements Around the Card -->
             <div class="card-float-item" style="top: -15px; left: -15px; animation-delay: 0s;">✨</div>
             <div class="card-float-item" style="top: 40%; right: -20px; animation-delay: 0.5s;">💖</div>
-            <div class="card-float-item" style="bottom: 10px; left: -15px; animation-delay: 1s;">🐰</div>
+            <div class="card-float-item" style="bottom: 10px; left: -15px; animation-delay: 1s;">🎂</div>
 
             <h2>Happy Birthday<br>My love 💕</h2>
             <p>මගේ රත්තරන් පැටියෝ, 🥺💖</p>
             <p>ඔයාට ගොඩාක් සතුටු පිරුණු සුබම සුබ උපන්දිනයක් වේවා මගේ මැණික! 🎂🎉❤️ ඔයා තමයි මගේ ජීවිතේ මට ලැබුණු ලොකුම සතුට🥺❤️.</p>
             <p>අද දවසට මම ගොඩක් ආදරෙයි, මොකද මගේ සැනසීම මේ ලෝකෙට ආවේ අද වගේ දවසක නිසා. 🥺✨ මගේ මුළු ලෝකෙම ලස්සන කළාට ඔයාට ගොඩක් ස්තූතියි❤️.</p>
-            <p>හැමදාමත් මේ වගේම සතුටින්, ඉන්න ලැබෙන්න කියලා මම හදවතින්ම ප්‍රාර්ථනා කරනවා✨. මම චූටි දූට ගොඩාක් ආදරෙයි! 🥺 ❤️</p>
+            <p>හැමදාමත් මේ වගේම සතුටින් ඉන්න ලැබෙන්න කියලා මම හදවතින්ම ප්‍රාර්ථනා කරනවා✨. මම චූටි දූට ගොඩාක් ආදරෙයි! 🥺 ❤️</p>
             <button class="letter-close" id="closeLetter">ආදරෙයි ගොඩාක්! 🤗💖</button>
         </div>
     </div>
@@ -382,6 +358,31 @@
 
     <script>
         let gameState = 'drawing'; 
+        
+        // --- Audio Integration (HTML5 Elements for better mobile support) ---
+        const bgMusic = document.getElementById('bgMusicElement');
+        const drawSound = document.getElementById('drawSoundElement');
+        const letterPopupSound = document.getElementById('letterPopupSoundElement');
+        const finalRevealSound = document.getElementById('finalRevealSoundElement');
+        const birthdaySong = document.getElementById('birthdaySongElement');
+        
+        let audioInitialized = false;
+
+        // Force browsers to unlock all audio files on the very first touch
+        function unlockAudio() {
+            if (!audioInitialized) {
+                // Play background music
+                bgMusic.play().catch(e => console.log("Waiting for more direct interaction to play BG"));
+                
+                // Briefly play and pause other sounds to load them into browser memory
+                drawSound.play().then(() => drawSound.pause()).catch(e => {});
+                letterPopupSound.play().then(() => letterPopupSound.pause()).catch(e => {});
+                finalRevealSound.play().then(() => finalRevealSound.pause()).catch(e => {});
+                birthdaySong.play().then(() => birthdaySong.pause()).catch(e => {});
+                
+                audioInitialized = true;
+            }
+        }
         
         // Safari scroll and address bar fix
         document.addEventListener('touchmove', function(e) {
@@ -550,6 +551,7 @@
         requestAnimationFrame(updateFireflyDrawing);
 
         function triggerExplosion() {
+            drawSound.pause(); 
             gameState = 'exploding';
             uiContainer.style.opacity = "0";
             
@@ -559,7 +561,6 @@
 
             const emojis = ['❤️', '💖', '💕', '✨', '🌸', '🦋'];
             
-            // OPTIMIZED: Using DocumentFragment to prevent lag
             const frag = document.createDocumentFragment();
             for (let i = 0; i < 80; i++) {
                 let p = document.createElement('div');
@@ -581,7 +582,6 @@
             setTimeout(() => {
                 ctx.clearRect(0, 0, logicalWidth, logicalHeight);
                 
-                // --- Cute Glowing Ground (මැජික් පොළොව) ---
                 ctx.save();
                 ctx.beginPath();
                 ctx.ellipse(logicalWidth / 2, logicalHeight - 10, 300, 30, 0, 0, Math.PI * 2);
@@ -592,7 +592,6 @@
                 ctx.fillStyle = grad;
                 ctx.fill();
 
-                // Inner brighter glow for the roots
                 ctx.beginPath();
                 ctx.shadowBlur = 20;
                 ctx.shadowColor = '#ffffff';
@@ -600,15 +599,29 @@
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
                 ctx.fill();
                 ctx.restore();
-                // ------------------------------------------
 
                 gameState = 'tree';
                 animateTree();
             }, 300);
         }
 
-        function onPressDown(e) { if (gameState === 'drawing') { e.preventDefault(); isHolding = true; } }
-        function onPressUp(e) { if (gameState === 'drawing') { e.preventDefault(); isHolding = false; } }
+        function onPressDown(e) { 
+            unlockAudio(); 
+            if (gameState === 'drawing') { 
+                e.preventDefault(); 
+                isHolding = true; 
+                // Resetting to start in case user paused halfway
+                drawSound.currentTime = 0; 
+                drawSound.play().catch(e => console.log(e)); 
+            } 
+        }
+        function onPressUp(e) { 
+            if (gameState === 'drawing') { 
+                e.preventDefault(); 
+                isHolding = false; 
+                drawSound.pause(); 
+            } 
+        }
         canvas.addEventListener('mousedown', onPressDown); canvas.addEventListener('touchstart', onPressDown, {passive: false});
         window.addEventListener('mouseup', onPressUp); window.addEventListener('touchend', onPressUp);
 
@@ -625,7 +638,6 @@
         const treeData = { branch: [[535, 680, 570, 250, 500, 200, 30, 100, [[540, 500, 455, 417, 340, 400, 13, 100, [[450, 435, 434, 430, 394, 395, 2, 40]]], [550, 445, 600, 356, 680, 345, 12, 100, [[578, 400, 648, 409, 661, 426, 3, 80]]], [539, 281, 537, 248, 534, 217, 3, 40], [546, 397, 413, 247, 328, 244, 9, 80, [[427, 286, 383, 253, 371, 205, 2, 40], [498, 345, 435, 315, 395, 330, 4, 60]]], [546, 357, 608, 252, 678, 221, 6, 100, [[590, 293, 646, 277, 648, 271, 2, 80]]]]]], bloom: { num: 700 } };
         const myTree = new Tree(canvas, logicalWidth, logicalHeight, treeData);
         
-        // Background එකේදිම මල් ටික calculate කරනවා. එතකොට Animation එක හිර වෙන්නේ නෑ!
         myTree.init(); 
 
         function animateTree() { 
@@ -656,7 +668,6 @@
             const tCtx = tempC.getContext('2d', {willReadFrequently: true});
             tCtx.fillStyle = 'white'; tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
             
-            // Text size adjusted specifically to fit the scaled phone view nicely
             tCtx.font = "95px 'Great Vibes', cursive";
             tCtx.fillText("Happy Birthday", logicalWidth / 2, logicalHeight / 2 - 80);
             tCtx.fillText("My Wife", logicalWidth / 2, logicalHeight / 2 + 40);
@@ -711,6 +722,7 @@
                 if (constellationTimer > 80) {  
                     constellationState = 'idle';
                     loveLetter.classList.add('show');
+                    letterPopupSound.play().catch(e => console.log(e)); 
                 }
             }
             requestAnimationFrame(renderConstellation);
@@ -718,6 +730,9 @@
 
         // --- The Final Cute Ending with Confetti & Edge Burst ---
         closeLetter.addEventListener('click', () => {
+            bgMusic.pause(); 
+            finalRevealSound.play().catch(e => console.log(e)); 
+
             gameState = 'wow';
             loveLetter.style.transition = 'transform 0.5s ease-in, opacity 0.5s ease';
             loveLetter.style.transform = 'scale(0.2) translateY(100px)';
@@ -738,6 +753,8 @@
                     
                     const finalMsg = document.getElementById('finalMessage');
                     finalMsg.style.opacity = '1';
+                    
+                    birthdaySong.play().catch(e => console.log(e)); 
 
                     let duration = 3 * 1000;
                     let animationEnd = Date.now() + duration;
@@ -749,10 +766,9 @@
                         let timeLeft = animationEnd - Date.now();
                         if (timeLeft <= 0) { return clearInterval(interval); }
                         
-                        // Original Confetti amount restored (50)
                         let particleCount = 50 * (timeLeft / duration);
                         confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 } }));
-                    }, 250); // Original speed restored (250ms)
+                    }, 250); 
                     
                     function spawnFinaleEmoji() {
                         const emojis = ['❤️', '💖', '💕', '✨', '🌸', '🐰', '🎈', '🎂'];
@@ -794,7 +810,6 @@
                         setTimeout(() => p.remove(), 4000); 
                     }
 
-                    // Original finale emoji burst restored (3 at a time, every 300ms)
                     setInterval(() => {
                         spawnFinaleEmoji();
                         spawnFinaleEmoji();
