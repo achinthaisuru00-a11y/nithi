@@ -148,7 +148,7 @@
         @keyframes shineGradient { to { background-position: 200% center; } }
         
         .letter-card p { 
-            color: rgba(255, 255, 255, 0.95); font-size: 14.5px; line-height: 1.7; margin-bottom: 12px; 
+            color: rgba(255, 255, 255, 0.95); font-size: 14.7px; line-height: 1.6; margin-bottom: 12px; 
             font-family: 'Noto Sans Sinhala', 'Poppins', sans-serif; font-weight: 400; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
             position: relative; z-index: 5;
         }
@@ -375,18 +375,24 @@
         // Force browsers to unlock all audio files
         function unlockAudio() {
             if (!audioInitialized) {
-                // Briefly play and pause other sounds to load them into browser memory
-                drawSound.play().then(() => drawSound.pause()).catch(e => {});
-                letterPopupSound.play().then(() => letterPopupSound.pause()).catch(e => {});
-                finalRevealSound.play().then(() => finalRevealSound.pause()).catch(e => {});
-                birthdaySong.play().then(() => birthdaySong.pause()).catch(e => {});
-                constellationSound.play().then(() => constellationSound.pause()).catch(e => {});
+                // Mute and unlock to prevent mobile crash/overlap
+                const soundsToUnlock = [letterPopupSound, finalRevealSound, birthdaySong, constellationSound];
+                
+                soundsToUnlock.forEach(sound => {
+                    sound.muted = true;
+                    sound.play().then(() => {
+                        sound.pause();
+                        sound.currentTime = 0;
+                        sound.muted = false;
+                    }).catch(e => {});
+                });
                 
                 audioInitialized = true;
             }
             
             // Background music එක නැවතිලා නම් තියෙන්නේ, ඒක අනිවාර්යයෙන්ම play කරන්න 
-            if (bgMusic.paused) {
+            // හැබැයි අවසාන කොටසට (wow state එකට) ඇවිත් නැත්නම් විතරයි!
+            if (bgMusic.paused && gameState !== 'wow') {
                 bgMusic.play().catch(e => console.log("BG Music waiting for interaction"));
             }
         }
@@ -755,10 +761,13 @@
 
         // --- The Final Cute Ending with Confetti & Edge Burst ---
         closeLetter.addEventListener('click', () => {
+            gameState = 'wow'; // State එක ඉස්සෙල්ලම මාරු කරනවා
+            
             bgMusic.pause(); 
+            bgMusic.currentTime = 0; // Music එක මුලටම ගෙනත් සම්පූර්ණයෙන්ම නවත්තනවා
+            
             finalRevealSound.play().catch(e => console.log(e)); 
 
-            gameState = 'wow';
             // Speed up the letter closing animation slightly
             loveLetter.style.transition = 'transform 0.4s ease-in, opacity 0.4s ease'; 
             loveLetter.style.transform = 'scale(0.2) translateY(100px)';
