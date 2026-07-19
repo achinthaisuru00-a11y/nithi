@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- Top & Bottom Bars Background එකට Blend කරන Meta Tags -->
+    <meta name="theme-color" content="#050005">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <title>The Love Quest 🐰💖</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@700;800&family=Noto+Sans+Sinhala:wght@400;700&family=Pacifico&family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -20,7 +26,11 @@
         }
 
         body {
-            background: radial-gradient(ellipse at top, rgba(255, 20, 147, 0.15) 0%, transparent 25%), radial-gradient(circle at 50% 20%, #3a0020 0%, #1a0010 45%, #050005 100%);
+            background-color: #050005;
+            /* රෝස පාට දීප්තිමත් කරලා, උඩයි යටයි 8% කින් විතරක් Blend වෙන්න හැදුවා */
+            background-image: 
+                linear-gradient(to bottom, #050005 0%, transparent 8%, transparent 92%, #050005 100%),
+                radial-gradient(circle at 50% 50%, #5c0029 0%, #240014 60%, transparent 100%);
             display: flex; justify-content: center; align-items: center;
             height: 100vh;
             height: 100dvh;
@@ -38,7 +48,7 @@
         @keyframes twinkle { 0% { opacity: 0.5; } 100% { opacity: 1; } }
 
         .moon {
-            position: absolute; top: 8%; right: 12%; width: 70px; height: 70px; border-radius: 50%;
+            position: absolute; top: 10%; right: 10%; width: 70px; height: 70px; border-radius: 50%;
             background: radial-gradient(circle at 35% 35%, #fff9f0, #ffe3c9 60%, #ffd1a3 100%);
             box-shadow: 0 0 40px 10px rgba(255, 220, 180, 0.45), 0 0 90px 30px rgba(255, 180, 200, 0.15);
             z-index: 2; opacity: 0.85; animation: moonGlow 6s ease-in-out infinite alternate; transition: opacity 1.5s ease;
@@ -290,7 +300,7 @@
                 transform: translate(-50%, -50%); 
             }
             .hold-text { font-size: 16px; padding: 0 20px; }
-            .moon { width: 50px; height: 50px; top: 5%; right: 5%; }
+            .moon { width: 50px; height: 50px; top: 8%; right: 8%; }
             .letter-card { width: 92%; padding: 35px 20px 25px 20px; }
             .letter-card h2 { font-size: 34px; margin-bottom: 8px; }
             .letter-card p { font-size: 14.7px; line-height: 1.6; margin-bottom: 8px; }
@@ -370,30 +380,28 @@
         const birthdaySong = document.getElementById('birthdaySongElement');
         const constellationSound = document.getElementById('constellationSoundElement');
         
-        let audioInitialized = false;
+        let audioUnlocked = false;
 
-        // Force browsers to unlock all audio files
-        function unlockAudio() {
-            if (!audioInitialized) {
-                // Mute and unlock to prevent mobile crash/overlap
-                const soundsToUnlock = [letterPopupSound, finalRevealSound, birthdaySong, constellationSound];
+        // iOS Audio Hack (100% Working) - පළමු Touch එකේදීම සද්ද ඇහෙන්නේ නැතිවෙන්න ප්ලේ කරලා Pause කරනවා.
+        function initAudio() {
+            if (!audioUnlocked) {
+                const soundsToPrime = [letterPopupSound, finalRevealSound, birthdaySong, constellationSound];
                 
-                soundsToUnlock.forEach(sound => {
-                    sound.muted = true;
-                    sound.play().then(() => {
-                        sound.pause();
-                        sound.currentTime = 0;
-                        sound.muted = false;
-                    }).catch(e => {});
+                soundsToPrime.forEach(s => {
+                    s.play().then(() => {
+                        s.pause();
+                        s.currentTime = 0;
+                    }).catch(e => console.log("Audio ready for later"));
                 });
+
+                audioUnlocked = true;
                 
-                audioInitialized = true;
-            }
-            
-            // Background music එක නැවතිලා නම් තියෙන්නේ, ඒක අනිවාර්යයෙන්ම play කරන්න 
-            // හැබැයි අවසාන කොටසට (wow state එකට) ඇවිත් නැත්නම් විතරයි!
-            if (bgMusic.paused && gameState !== 'wow') {
-                bgMusic.play().catch(e => console.log("BG Music waiting for interaction"));
+                if (gameState === 'drawing') {
+                    // පොඩි delay එකකින් පස්සේ Background music එක දානවා (පැටලෙන්නේ නැති වෙන්න)
+                    setTimeout(() => {
+                        bgMusic.play().catch(e => console.log("BG play error:", e));
+                    }, 50);
+                }
             }
         }
         
@@ -619,7 +627,7 @@
         }
 
         function onPressDown(e) { 
-            unlockAudio(); 
+            initAudio(); // Audio Unlock කරනවා
             if (gameState === 'drawing') { 
                 e.preventDefault(); 
                 isHolding = true; 
@@ -675,6 +683,7 @@
         let constellationTimer = 0;
 
         function startConstellation() {
+            constellationSound.currentTime = 0; // මුලට අරන් play කිරීම
             constellationSound.play().catch(e => console.log(e));
 
             bgStars.style.opacity = '0';
@@ -753,6 +762,7 @@
                 if (constellationTimer > 86) {  
                     constellationState = 'idle';
                     loveLetter.classList.add('show');
+                    letterPopupSound.currentTime = 0; // මුලට අරන් play කිරීම
                     letterPopupSound.play().catch(e => console.log(e)); 
                 }
             }
@@ -766,6 +776,7 @@
             bgMusic.pause(); 
             bgMusic.currentTime = 0; // Music එක මුලටම ගෙනත් සම්පූර්ණයෙන්ම නවත්තනවා
             
+            finalRevealSound.currentTime = 0;
             finalRevealSound.play().catch(e => console.log(e)); 
 
             // Speed up the letter closing animation slightly
@@ -783,6 +794,7 @@
                 cuteNova.style.animation = 'cutePopExpand 2.5s ease-in-out forwards';
                 
                 // Play song right when the cute transition starts!
+                birthdaySong.currentTime = 0;
                 birthdaySong.play().catch(e => console.log(e)); 
                 
                 // REDUCED DELAY: from 1000ms to 400ms (Fireworks pop fast now)
