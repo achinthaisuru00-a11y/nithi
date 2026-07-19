@@ -246,7 +246,7 @@
         }
 
         .photo-sparkle {
-            position: absolute; font-size: 24px; pointer-events: none; z-index: -1;
+            position: absolute; font-size: 30px; pointer-events: none; z-index: -1;
             animation: photoSparkleAnim 2.5s infinite alternate ease-in-out;
         }
 
@@ -759,7 +759,7 @@
                 if (constellationTimer > 120) { constellationState = 'holding'; constellationTimer = 0; }
             } else if (constellationState === 'holding') {
                 constellationTimer++;
-                if (constellationTimer > 86) {  
+                if (constellationTimer > 88) {  
                     constellationState = 'idle';
                     loveLetter.classList.add('show');
                     letterPopupSound.currentTime = 0; // මුලට අරන් play කිරීම
