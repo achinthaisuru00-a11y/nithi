@@ -382,22 +382,28 @@
         
         let audioUnlocked = false;
 
-        // iOS Audio Hack (100% Working) - පළමු Touch එකේදීම සද්ද ඇහෙන්නේ නැතිවෙන්න ප්ලේ කරලා Pause කරනවා.
+        // iOS Audio Hack (Fixed Audio Crash)
         function initAudio() {
             if (!audioUnlocked) {
+                audioUnlocked = true;
                 const soundsToPrime = [letterPopupSound, finalRevealSound, birthdaySong, constellationSound];
                 
                 soundsToPrime.forEach(s => {
-                    s.play().then(() => {
-                        s.pause();
-                        s.currentTime = 0;
-                    }).catch(e => console.log("Audio ready for later"));
+                    s.muted = true; // Mute before priming to prevent loud sound crash
+                    let playPromise = s.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            s.pause();
+                            s.currentTime = 0;
+                            s.muted = false; // Restore
+                        }).catch(e => {
+                            s.muted = false;
+                        });
+                    }
                 });
 
-                audioUnlocked = true;
-                
                 if (gameState === 'drawing') {
-                    // පොඩි delay එකකින් පස්සේ Background music එක දානවා (පැටලෙන්නේ නැති වෙන්න)
+                    // පොඩි delay එකකින් පස්සේ Background music එක දානවා
                     setTimeout(() => {
                         bgMusic.play().catch(e => console.log("BG play error:", e));
                     }, 50);
@@ -630,9 +636,11 @@
             initAudio(); // Audio Unlock කරනවා
             if (gameState === 'drawing') { 
                 e.preventDefault(); 
-                isHolding = true; 
-                drawSound.currentTime = 0; 
-                drawSound.play().catch(e => console.log(e)); 
+                if (!isHolding) { // එක දිගට play වෙන එක නවත්තන්න check කරනවා
+                    isHolding = true; 
+                    drawSound.currentTime = 0; 
+                    drawSound.play().catch(e => console.log(e)); 
+                }
             } 
         }
         function onPressUp(e) { 
