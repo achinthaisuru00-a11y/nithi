@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- Top Bar එක Background එකට Blend කරන Meta Tags -->
-    <meta name="theme-color" content="#250011">
+    <!-- Top & Bottom Bars Background එකට Blend කරන Meta Tags -->
+    <meta name="theme-color" content="#050005">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
@@ -21,12 +21,13 @@
         }
 
         html {
-            background-color: #1a0010; /* උඩ Bar එකට ගැලපෙන්න වෙනස් කළා */
+            background-color: #050005; /* ආයෙත් Original කළු පාටට ගෙනාවා අයින් වෙන තැන් blend වෙන්න */
             overscroll-behavior: none; 
         }
 
         body {
-            background: radial-gradient(circle at 50% 20%, #3a0020 0%, #1a0010 45%, #050005 100%);
+            /* මැද රෝස පාට වෙලා, උඩටයි යටටයි යද්දී කළු පාටට ලස්සනට Blend වෙන්න හැදුවා */
+            background: radial-gradient(circle at 50% 40%, #3a0020 0%, #1a0010 40%, #050005 85%);
             display: flex; justify-content: center; align-items: center;
             height: 100vh;
             height: 100dvh;
@@ -35,16 +36,17 @@
             overscroll-behavior: none;
         }
 
-        /* --- Dynamic Island Cute Pet Animation --- */
+        /* --- Dynamic Island Cute Pet Animation (100% Accurate) --- */
         .dynamic-island-pet {
             position: fixed;
-            top: 0;
+            /* Hardware Dynamic Island එකේ යට මායිමෙන් හරියටම පටන් ගන්න env() පාවිච්චි කළා (-2px දුන්නේ හිඩැසක් නොපෙනී Island එක ඇතුලෙන්ම එනවා වගේ පේන්න) */
+            top: calc(env(safe-area-inset-top, 54px) - 2px); 
             left: 50%;
             width: 1.5px;
-            height: 75px; /* Island එකට යටින් එන්න උස හැදුවා */
-            background: linear-gradient(to bottom, transparent 40px, rgba(255, 182, 193, 0.7) 100%);
+            height: 60px;
+            background: linear-gradient(to bottom, rgba(255,182,193,0.1) 0%, rgba(255, 182, 193, 0.8) 100%);
             transform-origin: top center;
-            animation: islandSwing 4s infinite ease-in-out;
+            animation: islandSwing 3.5s infinite ease-in-out;
             z-index: 1000;
             pointer-events: none;
         }
@@ -60,8 +62,8 @@
             animation: petPulse 2s infinite alternate;
         }
         @keyframes islandSwing {
-            0%, 100% { transform: translateX(-50%) rotate(-7deg); }
-            50% { transform: translateX(-50%) rotate(7deg); }
+            0%, 100% { transform: translateX(-50%) rotate(-8deg); }
+            50% { transform: translateX(-50%) rotate(8deg); }
         }
         @keyframes petPulse {
             0% { transform: scale(1); }
@@ -77,7 +79,7 @@
         @keyframes twinkle { 0% { opacity: 0.5; } 100% { opacity: 1; } }
 
         .moon {
-            position: absolute; top: 8%; right: 12%; width: 70px; height: 70px; border-radius: 50%;
+            position: absolute; top: 10%; right: 10%; width: 70px; height: 70px; border-radius: 50%;
             background: radial-gradient(circle at 35% 35%, #fff9f0, #ffe3c9 60%, #ffd1a3 100%);
             box-shadow: 0 0 40px 10px rgba(255, 220, 180, 0.45), 0 0 90px 30px rgba(255, 180, 200, 0.15);
             z-index: 2; opacity: 0.85; animation: moonGlow 6s ease-in-out infinite alternate; transition: opacity 1.5s ease;
@@ -329,7 +331,7 @@
                 transform: translate(-50%, -50%); 
             }
             .hold-text { font-size: 16px; padding: 0 20px; }
-            .moon { width: 50px; height: 50px; top: 5%; right: 5%; }
+            .moon { width: 50px; height: 50px; top: 8%; right: 8%; }
             .letter-card { width: 92%; padding: 35px 20px 25px 20px; }
             .letter-card h2 { font-size: 34px; margin-bottom: 8px; }
             .letter-card p { font-size: 14.7px; line-height: 1.6; margin-bottom: 8px; }
