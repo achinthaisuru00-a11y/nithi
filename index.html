@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- Top Bar එක Background එකට Blend කරන Meta Tags -->
+    <meta name="theme-color" content="#250011">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <title>The Love Quest 🐰💖</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@700;800&family=Noto+Sans+Sinhala:wght@400;700&family=Pacifico&family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -15,7 +21,7 @@
         }
 
         html {
-            background-color: #050005; 
+            background-color: #1a0010; /* උඩ Bar එකට ගැලපෙන්න වෙනස් කළා */
             overscroll-behavior: none; 
         }
 
@@ -27,6 +33,39 @@
             width: 100vw; overflow: hidden; font-family: 'Poppins', sans-serif;
             position: relative; touch-action: none;
             overscroll-behavior: none;
+        }
+
+        /* --- Dynamic Island Cute Pet Animation --- */
+        .dynamic-island-pet {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            width: 1.5px;
+            height: 75px; /* Island එකට යටින් එන්න උස හැදුවා */
+            background: linear-gradient(to bottom, transparent 40px, rgba(255, 182, 193, 0.7) 100%);
+            transform-origin: top center;
+            animation: islandSwing 4s infinite ease-in-out;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        .dynamic-island-pet::after {
+            content: '🐰💖';
+            position: absolute;
+            bottom: -22px;
+            left: -22px;
+            font-size: 22px;
+            width: 50px;
+            text-align: center;
+            filter: drop-shadow(0 0 10px rgba(255, 105, 180, 0.9));
+            animation: petPulse 2s infinite alternate;
+        }
+        @keyframes islandSwing {
+            0%, 100% { transform: translateX(-50%) rotate(-7deg); }
+            50% { transform: translateX(-50%) rotate(7deg); }
+        }
+        @keyframes petPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
         }
 
         /* --- Background Ambient Elements --- */
@@ -306,6 +345,9 @@
     </style>
 </head>
 <body>
+
+    <!-- Dynamic Island Cute Bunny -->
+    <div class="dynamic-island-pet"></div>
 
     <!-- Audio Elements for Mobile Support (HIDDEN) -->
     <audio id="bgMusicElement" src="romantic-bg.mp3" loop preload="auto"></audio>
