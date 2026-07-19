@@ -27,16 +27,49 @@
 
         body {
             background-color: #050005;
-            /* උඩ සහ යට කොටස් දෙකම එකම ප්‍රමාණයට 100% ක් කළු පාටට ලස්සනට සහ තදට Blend වෙන්න හැදුවා */
+            /* රෝස පාට දීප්තිමත් කරලා, උඩයි යටයි 8% කින් විතරක් Blend වෙන්න හැදුවා */
             background-image: 
-                linear-gradient(to bottom, #050005 0%, transparent 15%, transparent 85%, #050005 100%),
-                radial-gradient(circle at 50% 50%, #450025 0%, #1a0010 45%, transparent 100%);
+                linear-gradient(to bottom, #050005 0%, transparent 8%, transparent 92%, #050005 100%),
+                radial-gradient(circle at 50% 50%, #5c0029 0%, #240014 60%, transparent 100%);
             display: flex; justify-content: center; align-items: center;
             height: 100vh;
             height: 100dvh;
             width: 100vw; overflow: hidden; font-family: 'Poppins', sans-serif;
             position: relative; touch-action: none;
             overscroll-behavior: none;
+        }
+
+        /* --- Dynamic Island Cute Pet Animation (100% Accurate) --- */
+        .dynamic-island-pet {
+            position: fixed;
+            top: calc(env(safe-area-inset-top, 54px) - 2px); 
+            left: 50%;
+            width: 1.5px;
+            height: 60px;
+            background: linear-gradient(to bottom, rgba(255,182,193,0.1) 0%, rgba(255, 182, 193, 0.8) 100%);
+            transform-origin: top center;
+            animation: islandSwing 3.5s infinite ease-in-out;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        .dynamic-island-pet::after {
+            content: '🐰💖';
+            position: absolute;
+            bottom: -22px;
+            left: -22px;
+            font-size: 22px;
+            width: 50px;
+            text-align: center;
+            filter: drop-shadow(0 0 10px rgba(255, 105, 180, 0.9));
+            animation: petPulse 2s infinite alternate;
+        }
+        @keyframes islandSwing {
+            0%, 100% { transform: translateX(-50%) rotate(-8deg); }
+            50% { transform: translateX(-50%) rotate(8deg); }
+        }
+        @keyframes petPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
         }
 
         /* --- Background Ambient Elements --- */
@@ -317,6 +350,9 @@
 </head>
 <body>
 
+    <!-- Dynamic Island Cute Bunny -->
+    <div class="dynamic-island-pet"></div>
+
     <!-- Audio Elements for Mobile Support (HIDDEN) -->
     <audio id="bgMusicElement" src="romantic-bg.mp3" loop preload="auto"></audio>
     <audio id="drawSoundElement" src="draw-sound.mp3" loop preload="auto"></audio>
@@ -382,24 +418,25 @@
         
         let audioUnlocked = false;
 
-        // iPhone (iOS) වල පසුකාලීනව වැඩ කරන සද්ද බ්ලොක් නොවී, නිවැරදිව ප්ලේ වෙන්න පළමු touch එකෙන්ම Unlock කරන පිළිවෙල ක්‍රමය:
+        // iOS Audio Hack (100% Working) - පළමු Touch එකේදීම සද්ද ඇහෙන්නේ නැතිවෙන්න ප්ලේ කරලා Pause කරනවා.
         function initAudio() {
             if (!audioUnlocked) {
-                // සද්ද ඔක්කොම එකතු කරලා Volume බිංදුව කරලා සැනෙකින් ප්ලේ කරලා ප්‍රයිම් කරනවා (කිසිම සද්දයක් එළියට ඇහෙන්නේ හෝ පැටලෙන්නේ නැහැ)
-                const delayedSounds = [letterPopupSound, finalRevealSound, birthdaySong, constellationSound];
-                delayedSounds.forEach(sound => {
-                    const originalVolume = sound.volume;
-                    sound.volume = 0;
-                    sound.play().then(() => {
-                        sound.pause();
-                        sound.currentTime = 0;
-                        sound.volume = originalVolume; // ප්‍රයිම් වුණාට පස්සේ Volume එක ආපහු යථා තත්ත්වයට ගන්නවා
-                    }).catch(e => console.log("iOS Audio Unlocking/Priming..."));
+                const soundsToPrime = [letterPopupSound, finalRevealSound, birthdaySong, constellationSound];
+                
+                soundsToPrime.forEach(s => {
+                    s.play().then(() => {
+                        s.pause();
+                        s.currentTime = 0;
+                    }).catch(e => console.log("Audio ready for later"));
                 });
 
                 audioUnlocked = true;
+                
                 if (gameState === 'drawing') {
-                    bgMusic.play().catch(e => console.log("BG Music play error:", e));
+                    // පොඩි delay එකකින් පස්සේ Background music එක දානවා (පැටලෙන්නේ නැති වෙන්න)
+                    setTimeout(() => {
+                        bgMusic.play().catch(e => console.log("BG play error:", e));
+                    }, 50);
                 }
             }
         }
@@ -626,7 +663,7 @@
         }
 
         function onPressDown(e) { 
-            initAudio(); // පළවෙනි පාර Touch කරද්දී විතරක් හැම Audio එකක්ම බ්ලොක් නොවෙන්න Prime කරයි
+            initAudio(); // Audio Unlock කරනවා
             if (gameState === 'drawing') { 
                 e.preventDefault(); 
                 isHolding = true; 
@@ -682,6 +719,7 @@
         let constellationTimer = 0;
 
         function startConstellation() {
+            constellationSound.currentTime = 0; // මුලට අරන් play කිරීම
             constellationSound.play().catch(e => console.log(e));
 
             bgStars.style.opacity = '0';
@@ -760,6 +798,7 @@
                 if (constellationTimer > 86) {  
                     constellationState = 'idle';
                     loveLetter.classList.add('show');
+                    letterPopupSound.currentTime = 0; // මුලට අරන් play කිරීම
                     letterPopupSound.play().catch(e => console.log(e)); 
                 }
             }
@@ -773,6 +812,7 @@
             bgMusic.pause(); 
             bgMusic.currentTime = 0; // Music එක මුලටම ගෙනත් සම්පූර්ණයෙන්ම නවත්තනවා
             
+            finalRevealSound.currentTime = 0;
             finalRevealSound.play().catch(e => console.log(e)); 
 
             // Speed up the letter closing animation slightly
@@ -790,6 +830,7 @@
                 cuteNova.style.animation = 'cutePopExpand 2.5s ease-in-out forwards';
                 
                 // Play song right when the cute transition starts!
+                birthdaySong.currentTime = 0;
                 birthdaySong.play().catch(e => console.log(e)); 
                 
                 // REDUCED DELAY: from 1000ms to 400ms (Fireworks pop fast now)
