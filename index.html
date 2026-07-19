@@ -293,7 +293,7 @@
             .moon { width: 50px; height: 50px; top: 5%; right: 5%; }
             .letter-card { width: 92%; padding: 35px 20px 25px 20px; }
             .letter-card h2 { font-size: 34px; margin-bottom: 8px; }
-            .letter-card p { font-size: 13.5px; line-height: 1.6; margin-bottom: 8px; }
+            .letter-card p { font-size: 14.7px; line-height: 1.6; margin-bottom: 8px; }
             .letter-close { padding: 10px 24px; font-size: 14px; margin-top: 15px; }
             .letter-card::before { font-size: 45px; top: -25px; }
             .glowing-name { font-size: 55px; line-height: 1.1; }
@@ -312,7 +312,10 @@
     <audio id="drawSoundElement" src="draw-sound.mp3" loop preload="auto"></audio>
     <audio id="letterPopupSoundElement" src="letter-popup.mp3" preload="auto"></audio>
     <audio id="finalRevealSoundElement" src="final-reveal.mp3" preload="auto"></audio>
-    <audio id="birthdaySongElement" src="birthday-song.mp3" preload="auto"></audio>
+    <!-- ADDED LOOP HERE for Birthday Song -->
+    <audio id="birthdaySongElement" src="birthday-song.mp3" loop preload="auto"></audio>
+    
+    <audio id="constellationSoundElement" src="constellation-sound.mp3" preload="auto"></audio>
 
     <div class="stars" id="bgStars"></div>
     <div class="moon" id="moon"></div>
@@ -334,7 +337,7 @@
             <div class="polaroid-text">Happy Birthday My Love 🎂</div>
         </div>
         
-        <h1 class="glowing-name">Anjalina 💕</h1>
+        <h1 class="glowing-name">Anjaleena 💕</h1>
         <p class="final-sub">My Forever Love ✨</p>
     </div>
 
@@ -365,6 +368,7 @@
         const letterPopupSound = document.getElementById('letterPopupSoundElement');
         const finalRevealSound = document.getElementById('finalRevealSoundElement');
         const birthdaySong = document.getElementById('birthdaySongElement');
+        const constellationSound = document.getElementById('constellationSoundElement');
         
         let audioInitialized = false;
 
@@ -376,6 +380,7 @@
                 letterPopupSound.play().then(() => letterPopupSound.pause()).catch(e => {});
                 finalRevealSound.play().then(() => finalRevealSound.pause()).catch(e => {});
                 birthdaySong.play().then(() => birthdaySong.pause()).catch(e => {});
+                constellationSound.play().then(() => constellationSound.pause()).catch(e => {});
                 
                 audioInitialized = true;
             }
@@ -612,7 +617,6 @@
             if (gameState === 'drawing') { 
                 e.preventDefault(); 
                 isHolding = true; 
-                // Resetting to start in case user paused halfway
                 drawSound.currentTime = 0; 
                 drawSound.play().catch(e => console.log(e)); 
             } 
@@ -625,7 +629,6 @@
             } 
         }
         
-        // Listeners for drawing and triggering audio unlock
         canvas.addEventListener('mousedown', onPressDown); 
         canvas.addEventListener('touchstart', onPressDown, {passive: false});
         window.addEventListener('mouseup', onPressUp); 
@@ -666,6 +669,8 @@
         let constellationTimer = 0;
 
         function startConstellation() {
+            constellationSound.play().catch(e => console.log(e));
+
             bgStars.style.opacity = '0';
             canvas.classList.add('dim-tree');
 
@@ -677,6 +682,20 @@
             tCtx.font = "95px 'Great Vibes', cursive";
             tCtx.fillText("Happy Birthday", logicalWidth / 2, logicalHeight / 2 - 80);
             tCtx.fillText("My Wife", logicalWidth / 2, logicalHeight / 2 + 40);
+
+            // --- Heart Shape Drawing added below "My Wife" ---
+            tCtx.save();
+            tCtx.translate(logicalWidth / 2, logicalHeight / 2 + 130);
+            tCtx.scale(0.5, 0.5);
+            tCtx.beginPath();
+            tCtx.moveTo(0, -15);
+            tCtx.bezierCurveTo(-40, -55, -100, -15, -100, 35);
+            tCtx.bezierCurveTo(-100, 85, 0, 145, 0, 155);
+            tCtx.bezierCurveTo(0, 145, 100, 85, 100, 35);
+            tCtx.bezierCurveTo(100, -15, 40, -55, 0, -15);
+            tCtx.fill();
+            tCtx.restore();
+            // ------------------------------------------------
 
             const imgData = tCtx.getImageData(0, 0, logicalWidth, logicalHeight).data;
             const targets = [];
@@ -725,7 +744,7 @@
                 if (constellationTimer > 120) { constellationState = 'holding'; constellationTimer = 0; }
             } else if (constellationState === 'holding') {
                 constellationTimer++;
-                if (constellationTimer > 80) {  
+                if (constellationTimer > 86) {  
                     constellationState = 'idle';
                     loveLetter.classList.add('show');
                     letterPopupSound.play().catch(e => console.log(e)); 
@@ -740,18 +759,24 @@
             finalRevealSound.play().catch(e => console.log(e)); 
 
             gameState = 'wow';
-            loveLetter.style.transition = 'transform 0.5s ease-in, opacity 0.5s ease';
+            // Speed up the letter closing animation slightly
+            loveLetter.style.transition = 'transform 0.4s ease-in, opacity 0.4s ease'; 
             loveLetter.style.transform = 'scale(0.2) translateY(100px)';
             loveLetter.style.opacity = '0';
             
             if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
 
+            // REDUCED DELAY: from 500ms to 400ms
             setTimeout(() => {
                 loveLetter.classList.remove('show');
                 
                 const cuteNova = document.getElementById('cuteTransition');
                 cuteNova.style.animation = 'cutePopExpand 2.5s ease-in-out forwards';
                 
+                // Play song right when the cute transition starts!
+                birthdaySong.play().catch(e => console.log(e)); 
+                
+                // REDUCED DELAY: from 1000ms to 400ms (Fireworks pop fast now)
                 setTimeout(() => {
                     canvas.style.opacity = '0.05'; 
                     fxCanvas.style.opacity = '0'; 
@@ -759,8 +784,6 @@
                     
                     const finalMsg = document.getElementById('finalMessage');
                     finalMsg.style.opacity = '1';
-                    
-                    birthdaySong.play().catch(e => console.log(e)); 
 
                     let duration = 3 * 1000;
                     let animationEnd = Date.now() + duration;
@@ -822,9 +845,9 @@
                         spawnFinaleEmoji();
                     }, 300);
 
-                }, 1000); 
+                }, 400); 
 
-            }, 500);
+            }, 400);
         });
 
     </script>
