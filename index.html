@@ -382,31 +382,19 @@
         
         let audioUnlocked = false;
 
-        // iOS Audio Hack (Fixed Audio Crash)
+        // iOS Audio Hack - Improved to prevent simultaneous playback crash
         function initAudio() {
             if (!audioUnlocked) {
                 audioUnlocked = true;
-                const soundsToPrime = [letterPopupSound, finalRevealSound, birthdaySong, constellationSound];
                 
-                soundsToPrime.forEach(s => {
-                    s.muted = true; // Mute before priming to prevent loud sound crash
-                    let playPromise = s.play();
-                    if (playPromise !== undefined) {
-                        playPromise.then(() => {
-                            s.pause();
-                            s.currentTime = 0;
-                            s.muted = false; // Restore
-                        }).catch(e => {
-                            s.muted = false;
-                        });
-                    }
-                });
+                // Play කරන්නේ නැතුව Load විතරක් කරනවා (එතකොට සද්ද ඇහෙන්නේ නෑ, හැබැයි phone එකට memory එකට ගන්නවා)
+                letterPopupSound.load();
+                finalRevealSound.load();
+                birthdaySong.load();
+                constellationSound.load();
 
                 if (gameState === 'drawing') {
-                    // පොඩි delay එකකින් පස්සේ Background music එක දානවා
-                    setTimeout(() => {
-                        bgMusic.play().catch(e => console.log("BG play error:", e));
-                    }, 50);
+                    bgMusic.play().catch(e => console.log("BG play error:", e));
                 }
             }
         }
@@ -579,6 +567,7 @@
 
         function triggerExplosion() {
             drawSound.pause(); 
+            drawSound.currentTime = 0;
             gameState = 'exploding';
             uiContainer.style.opacity = "0";
             
@@ -636,10 +625,13 @@
             initAudio(); // Audio Unlock කරනවා
             if (gameState === 'drawing') { 
                 e.preventDefault(); 
-                if (!isHolding) { // එක දිගට play වෙන එක නවත්තන්න check කරනවා
+                if (!isHolding) { 
                     isHolding = true; 
-                    drawSound.currentTime = 0; 
-                    drawSound.play().catch(e => console.log(e)); 
+                    // දැනටමත් play වෙන්නේ නැත්තම් විතරක් play කරනවා (එතකොට overlap වෙන්නේ නෑ)
+                    if (drawSound.paused) {
+                        drawSound.currentTime = 0; 
+                        drawSound.play().catch(e => console.log(e)); 
+                    }
                 }
             } 
         }
