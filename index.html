@@ -27,10 +27,10 @@
 
         body {
             background-color: #050005;
-            /* මැද රෝස පාට දීප්තිමත් කරලා, උඩ සහ යට කොටස් 100% ක් කළු පාටට Blend වෙන්න හැදුවා */
+            /* උඩ සහ යට කොටස් දෙකම එකම ප්‍රමාණයට 100% ක් කළු පාටට ලස්සනට සහ තදට Blend වෙන්න හැදුවා */
             background-image: 
-                linear-gradient(to bottom, #050005 0%, transparent 12%, transparent 88%, #050005 100%),
-                radial-gradient(circle at 50% 40%, #450025 0%, #1a0010 50%, #050005 100%);
+                linear-gradient(to bottom, #050005 0%, transparent 15%, transparent 85%, #050005 100%),
+                radial-gradient(circle at 50% 50%, #450025 0%, #1a0010 45%, transparent 100%);
             display: flex; justify-content: center; align-items: center;
             height: 100vh;
             height: 100dvh;
@@ -382,9 +382,21 @@
         
         let audioUnlocked = false;
 
-        // පළවෙනි පාර Screen එක Touch කරද්දී විතරක් Background Music එක Play කරන සරල Function එක (කිසිම සද්දයක් පැටලෙන්නේ නැහැ)
+        // iPhone (iOS) වල පසුකාලීනව වැඩ කරන සද්ද බ්ලොක් නොවී, නිවැරදිව ප්ලේ වෙන්න පළමු touch එකෙන්ම Unlock කරන පිළිවෙල ක්‍රමය:
         function initAudio() {
             if (!audioUnlocked) {
+                // සද්ද ඔක්කොම එකතු කරලා Volume බිංදුව කරලා සැනෙකින් ප්ලේ කරලා ප්‍රයිම් කරනවා (කිසිම සද්දයක් එළියට ඇහෙන්නේ හෝ පැටලෙන්නේ නැහැ)
+                const delayedSounds = [letterPopupSound, finalRevealSound, birthdaySong, constellationSound];
+                delayedSounds.forEach(sound => {
+                    const originalVolume = sound.volume;
+                    sound.volume = 0;
+                    sound.play().then(() => {
+                        sound.pause();
+                        sound.currentTime = 0;
+                        sound.volume = originalVolume; // ප්‍රයිම් වුණාට පස්සේ Volume එක ආපහු යථා තත්ත්වයට ගන්නවා
+                    }).catch(e => console.log("iOS Audio Unlocking/Priming..."));
+                });
+
                 audioUnlocked = true;
                 if (gameState === 'drawing') {
                     bgMusic.play().catch(e => console.log("BG Music play error:", e));
@@ -614,7 +626,7 @@
         }
 
         function onPressDown(e) { 
-            initAudio(); // පළවෙනි පාර Touch කරද්දී විතරක් Music එක Play කරයි
+            initAudio(); // පළවෙනි පාර Touch කරද්දී විතරක් හැම Audio එකක්ම බ්ලොක් නොවෙන්න Prime කරයි
             if (gameState === 'drawing') { 
                 e.preventDefault(); 
                 isHolding = true; 
