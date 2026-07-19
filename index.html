@@ -21,13 +21,16 @@
         }
 
         html {
-            background-color: #050005; /* ආයෙත් Original කළු පාටට ගෙනාවා අයින් වෙන තැන් blend වෙන්න */
+            background-color: #050005; 
             overscroll-behavior: none; 
         }
 
         body {
-            /* මැද රෝස පාට වෙලා, උඩටයි යටටයි යද්දී කළු පාටට ලස්සනට Blend වෙන්න හැදුවා */
-            background: radial-gradient(circle at 50% 40%, #3a0020 0%, #1a0010 40%, #050005 85%);
+            background-color: #050005;
+            /* උඩ සහ යට කොටස් 100% ක්ම කළු පාටට ලස්සනට Blend වෙන්න Linear-Gradient එකක් Overlay කළා */
+            background-image: 
+                linear-gradient(to bottom, #050005 0%, transparent 15%, transparent 85%, #050005 100%),
+                radial-gradient(circle at 50% 50%, #3a0020 0%, #1a0010 45%, transparent 100%);
             display: flex; justify-content: center; align-items: center;
             height: 100vh;
             height: 100dvh;
